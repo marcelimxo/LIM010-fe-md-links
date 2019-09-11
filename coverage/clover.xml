@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< HEAD
+<coverage generated="1568160152598" clover="3.2.0">
+  <project timestamp="1568160152598" name="All files">
+    <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0" elements="4" coveredelements="2" complexity="0" loc="2" ncloc="2" packages="1" files="1" classes="1"/>
+    <file name="main.js" path="/home/laboratoria/LIM010-fe-md-links/lib/api/main.js">
+=======
+<coverage generated="1568157690340" clover="3.2.0">
+  <project timestamp="1568157690340" name="All files">
+    <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0" elements="4" coveredelements="2" complexity="0" loc="2" ncloc="2" packages="1" files="1" classes="1"/>
+    <file name="main.js" path="/home/laboratoria/Desktop/LIM010-fe-md-links/lib/api/main.js">
+>>>>>>> 553a038b530ac3b6820fef83d32dd8881ca3b114
+      <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="5" count="1" type="stmt"/>
+    </file>
+  </project>
+</coverage>
