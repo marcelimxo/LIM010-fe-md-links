@@ -1,57 +1,59 @@
 import {
-  readPath, transformPath, readPathExt, pathFiles,
+  pathExist, transformPath, pathIsMarkdown, pathFiles,
 } from '../lib/api/main';
 
-const userPath = 'tests/data/prueba.md';
+const relativePathFile = 'tests/data/prueba.md';
 const badPath = 'tests/none.txt';
-const absolutePath = '/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data/prueba.md';
-const dirPath = '/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data';
+const absolutePathFile = '/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data/prueba.md';
+const directoryPath = '/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data';
 
-describe('readPath ', () => {
-  it('should be a path prueba.md', () => {
-    expect(readPath(userPath)).toBe(true);
+describe('pathExist ', () => {
+  it('should return true because path (prueba.md) exists', () => {
+    expect(pathExist(relativePathFile)).toBe(true);
   });
 
-  it('should not be a path (none.txt) because it does not exist', () => {
-    expect(readPath(badPath)).toBe(false);
+  it('should return false because path (none.txt) does not exist', () => {
+    expect(pathExist(badPath)).toBe(false);
   });
 
-  it('should not be a path because is a string', () => {
-    expect(readPath('no soy un path')).toBe(false);
+  it('should return false because is a string', () => {
+    expect(pathExist('not a path')).toBe(false);
   });
 });
 
 
 describe('transformPath', () => {
   it('should be a absolute path', () => {
-    expect(transformPath(userPath)).toBe(absolutePath);
+    expect(transformPath(relativePathFile)).toBe(absolutePathFile);
   });
 
   it('should be the same path', () => {
-    expect(transformPath(absolutePath)).toBe(absolutePath);
+    expect(transformPath(absolutePathFile)).toBe(absolutePathFile);
   });
 });
 
-describe('readPathExt', () => {
-  it('should be .md', () => {
-    expect(readPathExt(userPath)).toBe(true);
+describe('pathIsMarkdown', () => {
+  it('should be true because is a .md', () => {
+    expect(pathIsMarkdown(relativePathFile)).toBe(true);
   });
 
-  it('should be a .txt', () => {
-    expect(readPathExt(badPath)).toBe(false);
+  it('should be false because is a .txt', () => {
+    expect(pathIsMarkdown(badPath)).toBe(false);
+  });
+
+  it('should be a false because is not a file', () => {
+    expect(pathIsMarkdown(directoryPath)).toBe(false);
   });
 });
 
 describe('pathFiles', () => {
-  it('should return an array with the files inside a directory', () => {
-    expect(Array.isArray(pathFiles(dirPath))).toBe(true);
-  });
-
-  it('should return an array with the file', () => {
-    expect(Array.isArray(pathFiles(userPath))).toBe(true);
+  it('should return an array with the absolute paths of the files inside a directory', () => {
+    expect(Array.isArray(pathFiles(directoryPath))).toBe(true);
+    expect(pathFiles(directoryPath)).toEqual([absolutePathFile]);
   });
 
   it('should return an array with the file name', () => {
-    expect(pathFiles(userPath)).toEqual([userPath]);
+    expect(Array.isArray(pathFiles(relativePathFile))).toBe(true);
+    expect(pathFiles(relativePathFile)).toEqual([relativePathFile]);
   });
 });
