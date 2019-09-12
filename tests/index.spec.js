@@ -54,6 +54,6 @@ describe('pathFiles', () => {
 
   it('should return an array with the file name', () => {
     expect(Array.isArray(pathFiles(relativePathFile))).toBe(true);
-    expect(pathFiles(relativePathFile)).toEqual([relativePathFile]);
+    expect(pathFiles(relativePathFile)).toEqual([absolutePathFile]);
   });
 });
