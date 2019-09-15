@@ -1,5 +1,5 @@
 import {
-  pathExist, transformPath, pathIsMarkdown, pathFiles,
+  pathExist, transformPath, pathIsMarkdown, pathFiles, linksFromFile,
 } from '../lib/api/main';
 
 const relativePathFile = 'tests/data/prueba.md';
@@ -21,9 +21,8 @@ describe('pathExist ', () => {
   });
 });
 
-
 describe('transformPath', () => {
-  it('should be a absolute path', () => {
+  it('should transform to an absolute path', () => {
     expect(transformPath(relativePathFile)).toBe(absolutePathFile);
   });
 
@@ -49,11 +48,23 @@ describe('pathIsMarkdown', () => {
 describe('pathFiles', () => {
   it('should return an array with the absolute paths of the files inside a directory', () => {
     expect(Array.isArray(pathFiles(directoryPath))).toBe(true);
-    expect(pathFiles(directoryPath)).toEqual([absolutePathFile]);
+    expect(pathFiles(directoryPath)).toEqual(['/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data/prueba.md',
+      '/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data/prueba_sin_links.md']);
   });
 
   it('should return an array with the file name', () => {
     expect(Array.isArray(pathFiles(relativePathFile))).toBe(true);
     expect(pathFiles(relativePathFile)).toEqual([absolutePathFile]);
+  });
+});
+
+describe('linksFromFile', () => {
+  it('should return an array with the links from the file', () => {
+    expect(Array.isArray(linksFromFile(absolutePathFile))).toBe(true);
+    expect(linksFromFile(absolutePathFile)).toEqual(['[soy un link](https://google.com)', '[Node.js](https://nodejs.org/en/)']);
+  });
+
+  it('should return an empty array because the file does not have any links', () => {
+    expect(linksFromFile('/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data/prueba_sin_links.md')).toEqual([]);
   });
 });
