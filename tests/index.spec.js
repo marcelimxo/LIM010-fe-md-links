@@ -1,6 +1,20 @@
+import fetchMock from 'node-fetch';
 import {
-  pathExist, transformPath, pathIsMarkdown, pathFiles, linksFromFile,
+  pathExist,
+  transformPath,
+  pathIsMarkdown,
+  pathFiles,
+  linksFromFile,
+  objLinks,
 } from '../lib/api/main';
+
+fetchMock
+  .mock('http://www.good-test-marcelim.com', 200)
+  .mock('http://www.bad-test-marcelim.net', 400)
+  .mock('no es una url', () => {
+    // eslint-disable-next-line no-throw-literal
+    throw 'error';
+  });
 
 const relativePathFile = 'tests/data/prueba.md';
 const badPath = 'tests/none.txt';
@@ -48,8 +62,10 @@ describe('pathIsMarkdown', () => {
 describe('pathFiles', () => {
   it('should return an array with the absolute paths of the files inside a directory', () => {
     expect(Array.isArray(pathFiles(directoryPath))).toBe(true);
-    expect(pathFiles(directoryPath)).toEqual(['/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data/prueba.md',
-      '/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data/prueba_sin_links.md']);
+    expect(pathFiles(directoryPath)).toEqual([
+      '/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data/prueba.md',
+      '/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data/prueba_sin_links.md',
+    ]);
   });
 
   it('should return an array with the file name', () => {
@@ -61,10 +77,46 @@ describe('pathFiles', () => {
 describe('linksFromFile', () => {
   it('should return an array with the links from the file', () => {
     expect(Array.isArray(linksFromFile(absolutePathFile))).toBe(true);
-    expect(linksFromFile(absolutePathFile)).toEqual(['[soy un link](https://google.com)', '[Node.js](https://nodejs.org/en/)']);
+    expect(linksFromFile(absolutePathFile)).toEqual([
+      '[soy un buen link](http://www.good-test-marcelim.com)',
+      '[soy un mal link](http://www.bad.net)',
+    ]);
   });
 
   it('should return an empty array because the file does not have any links', () => {
-    expect(linksFromFile('/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data/prueba_sin_links.md')).toEqual([]);
+    expect(
+      linksFromFile(
+        '/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data/prueba_sin_links.md',
+      ),
+    ).toEqual([]);
   });
+});
+
+describe('objLinks', () => {
+  it('should be a function', () => {
+    expect(typeof objLinks).toBe('function');
+  });
+
+  it('should return an object with link properties', () => objLinks('[soy un buen link](http://www.good-test-marcelim.com)', absolutePathFile).then((links) => {
+    expect(links).toEqual({
+      href: 'http://www.good-test-marcelim.com',
+      text: 'soy un buen link',
+      file: '/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data/prueba.md',
+    });
+  }));
+
+  it('should return an object with link properties and validation should return status 200', () => objLinks('[soy un buen link](http://www.good-test-marcelim.com)', absolutePathFile, { validate: true }).then((links) => {
+    expect(links.status).toBe(200);
+    expect(links.ok).toBe(true);
+  }));
+
+  it('should return an object with link properties and validation should return status 400', () => objLinks('[soy un mal link](http://www.bad-test-marcelim.net)', absolutePathFile, { validate: true }).then((links) => {
+    expect(links.status).toBe(400);
+    expect(links.ok).toBe(false);
+  }));
+
+  it('should fail', () => objLinks('[todo mal](no es una url)', absolutePathFile, { validate: true }).then((links) => {
+    expect(links.status).toBe(null);
+    expect(links.ok).toBe(false);
+  }));
 });
