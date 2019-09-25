@@ -3,8 +3,9 @@
 /* eslint-disable no-console */
 "use strict";
 
-var _index = _interopRequireDefault(require("./index"));
+var _cmd = _interopRequireDefault(require("./cmd"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-(0, _index.default)(process.argv[2], `{ ${process.argv[3]} }`).then(links => console.log(links)).catch(err => console.error(err));
+const [,, ruta, param1, param2] = process.argv;
+(0, _cmd.default)(ruta, param1, param2).then(console.log);

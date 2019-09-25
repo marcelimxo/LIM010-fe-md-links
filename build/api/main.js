@@ -5,11 +5,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.objLinks = exports.linksFromFile = exports.pathFiles = exports.pathIsMarkdown = exports.transformPath = exports.pathExist = void 0;
 
+var _nodeFetch = _interopRequireDefault(require("node-fetch"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 const path = require('path');
 
 const fs = require('fs');
-
-const fetch = require('node-fetch');
 
 const pathExist = userPath => {
   if (fs.existsSync(userPath)) {
@@ -78,7 +80,7 @@ const objLinks = (link, file, validate) => new Promise(resolve => {
   const [href] = link.match(hrefRegex);
 
   if (validate) {
-    fetch(href).then(res => {
+    (0, _nodeFetch.default)(href).then(res => {
       resolve({
         href,
         text,
