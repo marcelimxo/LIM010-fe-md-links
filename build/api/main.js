@@ -82,26 +82,26 @@ const objLinks = (link, file, validate) => new Promise(resolve => {
   if (validate) {
     (0, _nodeFetch.default)(href).then(res => {
       resolve({
+        file,
         href,
         text,
-        file,
         status: res.status,
-        ok: res.statusText === 'OK'
+        ok: res.statusText === 'OK' ? 'OK' : 'FAIL'
       });
     }).catch(() => {
       resolve({
+        file,
         href,
         text,
-        file,
         status: null,
-        ok: false
+        ok: 'FAIL'
       });
     });
   } else {
     resolve({
+      file,
       href,
-      text,
-      file
+      text
     });
   }
 });
