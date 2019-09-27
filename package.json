@@ -15,6 +15,9 @@
     "jest"
   ],
   "license": "MIT",
+  "bin": {
+    "md-links": "build/cli.js"
+  },
   "scripts": {
     "test": "jest --verbose --coverage",
     "test:coverage": "jest --coverage",
