@@ -1,1 +1,1 @@
-Este es un link [soy un buen link](http://www.good-test-marcelim.com) y este es otro link [soy un mal link](http://www.bad.net)
+Este es un link [soy un buen link](http://www.good-test-marcelim.com) y este es otro link [soy un mal link](http://www.bad-test-marcelim.net)

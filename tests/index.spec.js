@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import fetchMock from 'node-fetch';
 import {
   pathExist,
@@ -7,6 +8,20 @@ import {
   linksFromFile,
   objLinks,
 } from '../lib/api/main';
+
+import cmd from '../lib/cmd';
+
+const chalk = require('chalk');
+
+const {
+  blue, red, green, magenta,
+} = chalk.bold;
+
+const { underline, italic } = chalk;
+
+const { white, cyan, gray } = chalk;
+
+const emoji = require('node-emoji');
 
 fetchMock
   .mock('http://www.good-test-marcelim.com', 200)
@@ -19,6 +34,7 @@ fetchMock
 const relativePathFile = 'tests/data/prueba.md';
 const badPath = 'tests/none.txt';
 const absolutePathFile = '/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data/prueba.md';
+const noLinksPath = '/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data/prueba_sin_links.md';
 const directoryPath = '/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data';
 
 describe('pathExist ', () => {
@@ -79,15 +95,13 @@ describe('linksFromFile', () => {
     expect(Array.isArray(linksFromFile(absolutePathFile))).toBe(true);
     expect(linksFromFile(absolutePathFile)).toEqual([
       '[soy un buen link](http://www.good-test-marcelim.com)',
-      '[soy un mal link](http://www.bad.net)',
+      '[soy un mal link](http://www.bad-test-marcelim.net)',
     ]);
   });
 
   it('should return an empty array because the file does not have any links', () => {
     expect(
-      linksFromFile(
-        '/home/laboratoria/Desktop/LIM010-fe-md-links/tests/data/prueba_sin_links.md',
-      ),
+      linksFromFile(noLinksPath),
     ).toEqual([]);
   });
 });
@@ -107,16 +121,34 @@ describe('objLinks', () => {
 
   it('should return an object with link properties and validation should return status 200', () => objLinks('[soy un buen link](http://www.good-test-marcelim.com)', absolutePathFile, { validate: true }).then((links) => {
     expect(links.status).toBe(200);
-    expect(links.ok).toBe(true);
+    expect(links.ok).toBe('OK');
   }));
 
   it('should return an object with link properties and validation should return status 400', () => objLinks('[soy un mal link](http://www.bad-test-marcelim.net)', absolutePathFile, { validate: true }).then((links) => {
     expect(links.status).toBe(400);
-    expect(links.ok).toBe(false);
+    expect(links.ok).toBe('FAIL');
   }));
 
   it('should fail', () => objLinks('[todo mal](no es una url)', absolutePathFile, { validate: true }).then((links) => {
     expect(links.status).toBe(null);
-    expect(links.ok).toBe(false);
+    expect(links.ok).toBe('FAIL');
   }));
+});
+
+describe('cmd', () => {
+  it('should return error because there is no path', () => expect(cmd())
+    .resolves.toMatch(/Por favor, ingresa una ruta/));
+
+  it('should return how many links are in total, how many are unique and how many are broken', () => expect(cmd(absolutePathFile, '-s', '-v')).resolves.toMatch(/(Total)|(Unique)|(Broken)/g));
+
+  it('should return how many links are in total and how many are unique', () => expect(cmd(absolutePathFile, '-s')).resolves.toMatch(/(Total)|(Unique)/g));
+
+  it('should return links with status info', () => expect(cmd(absolutePathFile, '-v')).resolves.toMatch(/(\.md)|(OK)|(FAIL)/g));
+
+  it('should return links without status info', () => expect(cmd(absolutePathFile)).resolves.toMatch(/(🔗)|(\.md)|(https:)|(http:)/g));
+
+
+  it('should return an error because the file does not have any links', () => expect(cmd(noLinksPath)).rejects.toThrowError(/No links found/));
+
+  it('should return an error because the path does not exists', () => expect(cmd('/file/algo')).rejects.toThrowError(/The path does not exists/));
 });
