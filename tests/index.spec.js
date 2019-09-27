@@ -11,17 +11,6 @@ import {
 
 import cmd from '../lib/cmd';
 
-const chalk = require('chalk');
-
-const {
-  blue, red, green, magenta,
-} = chalk.bold;
-
-const { underline, italic } = chalk;
-
-const { white, cyan, gray } = chalk;
-
-const emoji = require('node-emoji');
 
 fetchMock
   .mock('http://www.good-test-marcelim.com', 200)
